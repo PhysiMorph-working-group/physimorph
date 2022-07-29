@@ -184,7 +184,7 @@ morph:
 	cp -f ./physimorph/main.cpp ./
 	cp -f ./physimorph/Makefile ./
 	cp -f ./physimorph/VERSION.txt ./
-	cp -rf ./physimorph/config/* ./
+	cp -rf ./physimorph/config/* ./config/
 	cp -f ./physimorph/Makefile ./sample_projects/Makefile-default
 	make insertion
 
@@ -322,7 +322,8 @@ git-update-physimorph:
 	cd ./physimorph/
 	git pull
 	cd ..
-
+git-branch:
+	git checkout -b $(USER)
 git-push:
 	cp -f ./custom_modules ./physimorph/custom_modules/ 
 	cp -f ./main.cpp ./physimorph/main.cpp 
