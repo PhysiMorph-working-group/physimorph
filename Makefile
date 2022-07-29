@@ -326,7 +326,7 @@ git-branch:
 	git checkout -b $(USER)
 	
 git-push:
-	cp -rf ./custom_modules ./physimorph/custom_modules/ 
+	cp -rf ./custom_modules/* ./physimorph/custom_modules/ 
 	cp -f ./main.cpp ./physimorph/main.cpp 
 	cp -f ./Makefile ./physimorph/Makefile 
 	cp -f ./VERSION.txt ./physimorph/VERSION.txt 
