@@ -324,12 +324,13 @@ git-update-physimorph:
 	cd ..
 git-branch:
 	git checkout -b $(USER)
+	
 git-push:
-	cp -f ./custom_modules ./physimorph/custom_modules/ 
+	cp -rf ./custom_modules ./physimorph/custom_modules/ 
 	cp -f ./main.cpp ./physimorph/main.cpp 
 	cp -f ./Makefile ./physimorph/Makefile 
 	cp -f ./VERSION.txt ./physimorph/VERSION.txt 
-	cp -f ./config/* ./physimorph/config/* 
+	cp -rf ./config/* ./physimorph/config/* 
 	cd -f ./physimorph/
 	git add
 	git commit -m "new commit $(USER)"
