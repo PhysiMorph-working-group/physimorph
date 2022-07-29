@@ -74,16 +74,15 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 //
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
-std::vector<double> convert_to_axis(Cell* pCell)
+void convert_eccentricity_to_axis(Cell* pCell)
 {
-	pCell->
-	std::vector<double> position = {0,0,0}; 
+	double new_volume=pCell->get_total_volume();
 	double pi = 3.141592653589793238462643383279502884;
 	double semimajor = parameters.doubles("major_axis_2a")/2;
 	double ecc = parameters.doubles("eccentricity");
 	double vol = parameters.doubles("starting_cell_volume");
-	double b_axis_calc = pow( pow(semimajor,2)*(1-pow(ecc,2)), 0.5);
-	double c_axis_calc = (3*vol)/( 4*pi*pow(((1-ecc)*pow(semimajor,2) ),0.5));
+	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
+	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
 
 	std::cout << "ecc " << ecc << " ... " << std::endl;
 	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
@@ -91,8 +90,19 @@ std::vector<double> convert_to_axis(Cell* pCell)
 	pCell->custom_data["axis_a"] = semimajor;
 	pCell->custom_data["axis_b"] = b_axis_calc;
 	pCell->custom_data["axis_c"] = c_axis_calc;
+	return; 
 
 }
+
+
+void custom_update_radius( Cell* pCell, Phenotype& phenotype, double dt )
+{
+	double new_volume=pCell->get_total_volume();
+	// 
+
+	return; 
+}
+
 void create_cell_types( void )
 {
 	
@@ -296,11 +306,37 @@ void neighbor_interaction(Cell *pCell_v, Cell* pCell_c)
 	return;
 
 }
+void find_longest_axis(Cell* pCell)
+{
+
+	if(pCell->custom_data["axis_a"]>= pCell->custom_data["axis_b"] &&pCell->custom_data["axis_a"] >= pCell->custom_data["axis_c"]
+	{
+		pCell->custom_data["longest axis"]
+		return; 
+	}
+	if(pCell->custom_data["axis_b"]>= pCell->custom_data["axis_c"] &&pCell->custom_data["axis_b"] >= pCell->custom_data["axis_a"]
+	{
+		return 
+	}
+	if (two-D==true)
+	{
+		if(pCell->custom_data["axis_c"]>= pCell->custom_data["axis_a"] &&pCell->custom_data["axis_c"] >= pCell->custom_data["axis_a"]
+		{
+			return 
+		}
+	}
+}
+void elongation(Cell* pCell)
+{
+	//find longest axis
+	// longest_axis =longest_axis * scale factor
+
+}
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
 
-	
-	return; 
+	custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
+
 }
 
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt )
