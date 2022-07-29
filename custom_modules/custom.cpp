@@ -66,6 +66,7 @@
 */
 
 #include "./custom.h"
+
 static double four_thirds_pi =  4.188790204786391;
 // ellipse radius
 double ellipse_radius= 1.0;
@@ -358,3 +359,63 @@ void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& 
 { return; } 
 
 
+
+
+// void update_axis( Cell* pCell, Phenotype& phenotype, double dt )
+// {
+// 	static double four_thirds_pi =  4.188790204786391;
+// 	double new_vol = phenotype.volume.total; 
+// 	double scale_fac = new_vol - four_thirds_pi*pCell->custom_data["axis_a"]*pC->custom_data["axis_b"]*pC->custom_data["axis_c"]; 
+// 	scale_fac = pow( scale_fac , 0.333333333333333333333333333333333333333 ); 
+// 	pC->custom_data["axis_a"] *= scale_fac;
+// 	pC->custom_data["axis_b"] *= scale_fac;
+// 	pC->custom_data["axis_c"] *= scale_fac;
+// 	return; 
+// }
+
+
+void custom_chemotaxis_function( Cell* pCell, Phenotype& phenotype , double dt )
+{
+	// bias direction is gradient for the indicated substrate 
+	phenotype.motility.migration_bias_direction = pCell->nearest_gradient(phenotype.motility.chemotaxis_index);
+
+	// change cell orientation
+	custom_assign_orientation(pCell, phenotype, dt);
+
+	// if orientation is aligned to bias
+	// a.b/|a.b|
+	double dot_prod = 0;
+    for (int i = 0; i < 3; i++) {
+   		dot_prod += pCell->state.orientation[i] * phenotype.motility.migration_bias_direction[i];
+	}
+
+	if ((dot_prod) <= 1) {
+		// move up or down gradient based on this direction 
+		phenotype.motility.migration_bias_direction *= phenotype.motility.chemotaxis_direction; 
+		
+		// normalize 
+		normalize( &( phenotype.motility.migration_bias_direction ) );
+	} else {
+		custom_assign_orientation(pCell, phenotype, dt);
+	}
+	return;
+}
+
+void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
+{
+	// later - set true/false for which method
+
+	// get bias direction and turn instantaneously
+	pCell->state.orientation[0] = phenotype.motility.migration_bias_direction[0];
+	pCell->state.orientation[1] = phenotype.motility.migration_bias_direction[1];
+	pCell->state.orientation[2] = 1;
+
+	// get bias direction and turn incrementaly 
+	pCell->state.orientation[0] += 0.1*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.1*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[2] = 1;
+
+	normalize( &( pCell->state.orientation ) );
+
+    return;
+}
