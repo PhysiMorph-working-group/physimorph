@@ -1,3 +1,11 @@
+# set up and installation in physiCell
+cd PhysiCell_path
+git clone git-url
+cp physimorph/Makefile .
+make morph
+make
+
+
 # ellipsoid cells
 
 ## still needed
