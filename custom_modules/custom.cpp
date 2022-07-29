@@ -74,25 +74,25 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 //
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
-// void convert_eccentricity_to_axis(Cell* pCell)
-// {
-// 	double new_volume=pCell->get_total_volume();
-// 	double pi = 3.141592653589793238462643383279502884;
-// 	double semimajor = parameters.doubles("major_axis_2a")/2;
-// 	double ecc = parameters.doubles("eccentricity");
-// 	double vol = parameters.doubles("starting_cell_volume");
-// 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
-// 	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
+void convert_eccentricity_to_axis(Cell* pCell)
+{
+	double new_volume=pCell->get_total_volume();
+	double pi = 3.141592653589793238462643383279502884;
+	double semimajor = parameters.doubles("major_axis_2a")/2;
+	double ecc = parameters.doubles("eccentricity");
+	double vol = parameters.doubles("starting_cell_volume");
+	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
+	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
 
-// 	std::cout << "ecc " << ecc << " ... " << std::endl;
-// 	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
+	std::cout << "ecc " << ecc << " ... " << std::endl;
+	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
 
-// 	pCell->custom_data["axis_a"] = semimajor;
-// 	pCell->custom_data["axis_b"] = b_axis_calc;
-// 	pCell->custom_data["axis_c"] = c_axis_calc;
-// 	return; 
+	pCell->custom_data["axis_a"] = semimajor;
+	pCell->custom_data["axis_b"] = b_axis_calc;
+	pCell->custom_data["axis_c"] = c_axis_calc;
+	return; 
 
-// }
+}
 
 
 void custom_update_radius( Cell* pCell, Phenotype& phenotype, double dt )
