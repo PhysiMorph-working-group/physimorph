@@ -254,7 +254,7 @@ jpeg:
 	rm -f __H*.txt __W*.txt __resize.txt 
 	
 gif: 
-	convert -resize '20%' -delay 10 -loop 0 ./output/snap*.svg ./output/out.gif 
+	convert -delay 0 -loop 0 $(OUTPUT)/s*.svg $(OUTPUT)/out.gif 
 	 
 movie:
 	ffmpeg -r $(FRAMERATE) -f image2 -i $(OUTPUT)/snapshot%08d.jpg -vcodec libx264 -pix_fmt yuv420p -strict -2 -tune animation -crf 15 -acodec none $(OUTPUT)/out.mp4
