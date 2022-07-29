@@ -171,21 +171,22 @@ custom.o: ./custom_modules/custom.cpp
 # cleanup
 insertion:
 	make clean
-	cp -f ./PhysiMorph/custom_modules/PhysiCell* ./modules
+	cp -rf ./physimorph/custom_modules/PhysiCell* ./modules
 
 do-it-all:
 	make clean
 	cp -f ./custom_modules/PhysiCell* ./modules
 	make
 	./project
-	
-PhysiMorph:
-	cp ./PhysiMorph/custom_modules/ ./custom_modules/
-	cp ./PhysiMorph/main.cpp ./
-	cp ./PhysiMorph/Makefile ./
-	cp ./PhysiMorph/VERSION.txt ./
-	cp ./PhysiMorph/config/* ./
-	cp ./PhysiMorph/custom_modules/* ./
+
+morph:
+	cp -rf ./physimorph/custom_modules/ ./custom_modules/
+	cp -f ./physimorph/main.cpp ./
+	cp -f ./physimorph/Makefile ./
+	cp -f ./physimorph/VERSION.txt ./
+	cp -rf ./physimorph/config/* ./
+	cp -f ./physimorph/Makefile ./sample_projects/Makefile-default
+	make insertion
 
 reset-dont-use:
 	rm -f *.cpp 
@@ -316,3 +317,22 @@ git-add:
 	git add README.md
 	git add ./config/* 
 	git add ./custom_modules/* 
+
+git-update-physimorph:
+	cd ./physimorph/
+	git pull
+	cd ..
+
+git-push:
+	cp -f ./custom_modules ./physimorph/custom_modules/ 
+	cp -f ./main.cpp ./physimorph/main.cpp 
+	cp -f ./Makefile ./physimorph/Makefile 
+	cp -f ./VERSION.txt ./physimorph/VERSION.txt 
+	cp -f ./config/* ./physimorph/config/* 
+	cd -f ./physimorph/
+	git add
+	git commit -m "new commit $(USER)"
+	git push
+	cd ..
+
+	
