@@ -65,28 +65,67 @@
 ###############################################################################
 */
 
+#include <vector>
+#include <string>
+
+#ifndef __PhysiCell_pathology__
+#define __PhysiCell_pathology__
+
 #include "../core/PhysiCell.h"
-#include "../modules/PhysiCell_standard_modules.h" 
 
-using namespace BioFVM; 
-using namespace PhysiCell;
+#include "./PhysiCell_SVG.h"
+#include "../BioFVM/BioFVM_utilities.h"
 
-// setup functions to help us along 
+namespace PhysiCell{
+	
+struct PhysiCell_SVG_options_struct {
+	bool plot_nuclei = false; 
+	bool plot_ellipse=true;
+	bool colorblind_safe_colors=false;
+	bool colorblind_shape=false;
+	std::string simulation_time_units = "min";
+	std::string mu = "&#956;";
+	std::string simulation_space_units = "&#956;m";
+	
+	std::string label_time_units = "days"; 
+	
+	double font_size = 200; 
+	std::string font_color = "black";
+	std::string font = "Arial";
 
-void create_cell_types( void );
-void setup_tissue( void ); 
+	double length_bar = 100; 
+}; 
 
-// set up the BioFVM microenvironment 
-void setup_microenvironment( void ); 
+extern PhysiCell_SVG_options_struct PhysiCell_SVG_options;
 
-// custom pathology coloring function 
+// done 
+std::vector<double> transmission( std::vector<double>& incoming_light, std::vector<double>& absorb_color, double thickness , double stain );
 
-std::vector<std::string> my_coloring_function( Cell* );
+// these give (in order) the cytoplasm color, cytoplasm outline color, nuclear color, nuclear outline color, 
+// each string is either rgb(R,G,B) or none 
 
-// custom functions can go here 
+std::vector<std::string> simple_cell_coloring( Cell* pCell ); // done 
+std::vector<std::string> false_cell_coloring_Ki67( Cell* pCell ); // done 
+std::vector<std::string> false_cell_coloring_live_dead( Cell* pCell ); // done 
 
-void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
-void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
+std::vector<std::string> false_cell_coloring_cycling_quiescent( Cell* pCell ); // done 
 
-void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
+std::vector<std::string> false_cell_coloring_cytometry( Cell* pCell ); 
 
+std::vector<std::string> hematoxylin_and_eosin_cell_coloring( Cell* pCell ); // done 
+std::vector<std::string> hematoxylin_and_eosin_stroma_coloring( double& ECM_fraction , double& blood_vessel_fraction); // planned 
+
+std::vector<std::string> paint_by_number_cell_coloring( Cell* pCell ); // done 
+
+std::string formatted_minutes_to_DDHHMM( double minutes ); 
+
+void SVG_plot( std::string filename , Microenvironment& M, double z_slice , double time, std::vector<std::string> (*cell_coloring_function)(Cell*) ); // done
+
+void SVG_plot_with_stroma( std::string filename , Microenvironment& M, double z_slice , double time, std::vector<std::string> (*cell_coloring_function)(Cell*) , 
+	int ECM_index, std::vector<std::string> (*ECM_coloring_function)(double) ); // planned
+	
+void create_plot_legend( std::string filename , std::vector<std::string> (*cell_coloring_function)(Cell*) ); 
+
+};
+
+#endif

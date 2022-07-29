@@ -33,7 +33,7 @@
 #                                                                             #
 # BSD 3-Clause License (see https://opensource.org/licenses/BSD-3-Clause)     #
 #                                                                             #
-# Copyright (c) 2015-2021, Paul Macklin and the PhysiCell Project             #
+# Copyright (c) 2015-2018, Paul Macklin and the PhysiCell Project             #
 # All rights reserved.                                                        #
 #                                                                             #
 # Redistribution and use in source and binary forms, with or without          #
@@ -65,28 +65,69 @@
 ###############################################################################
 */
 
-#include "../core/PhysiCell.h"
-#include "../modules/PhysiCell_standard_modules.h" 
+#include "./PhysiCell_SVG.h"
 
-using namespace BioFVM; 
-using namespace PhysiCell;
+bool Write_SVG_start( std::ostream& os, double width, double height )
+{
+ os << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>" << std::endl 
+    << "<!-- Created with PhysiCell (http://PhysiCell.MathCancer.org/) -->" << std::endl; 
 
-// setup functions to help us along 
+ os << "<svg " << std::endl
+    << " xmlns:dc=\"http://purl.org/dc/elements/1.1/\" " << std::endl
+    << " xmlns:cc=\"http://creativecommons.org/ns#\" " << std::endl
+    << " xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" " << std::endl
+    << " xmlns:svg=\"http://www.w3.org/2000/svg\" " << std::endl
+    << " xmlns=\"http://www.w3.org/2000/svg\" " << std::endl
+    << " version=\"1.1\" " << std::endl
+    << " width=\"" << width << "\" " << std::endl
+    << " height=\"" << height << "\" " << std::endl
+    << " id=\"svg2\">" << std::endl;
+	
+	return true; 
+}
 
-void create_cell_types( void );
-void setup_tissue( void ); 
+bool Write_SVG_end( std::ostream& os )
+{
+ os << "</svg>" << std::endl;
+ return true; 
+}
 
-// set up the BioFVM microenvironment 
-void setup_microenvironment( void ); 
+bool Write_SVG_text( std::ostream& os, const char* str , double position_x, double position_y, double font_size , const char* color , const char* font)
+{
+ os << "  <text x=\"" << position_x << "\" y=\""  << position_y << "\"" << std::endl
+    << "   font-family=\"" << font << "\" font-size=\"" << font_size << "\" fill=\"" << color << "\" >" << std::endl
+    << "   " << str << std::endl << "  </text>" << std::endl; 
+  return true; 
+}
 
-// custom pathology coloring function 
+bool Write_SVG_circle( std::ostream& os, double center_x, double center_y, double radius, double stroke_size, 
+                       std::string stroke_color , std::string fill_color )
+{
+ os << "  <circle cx=\"" << center_x << "\" cy=\"" << center_y << "\" r=\"" << radius << "\" stroke-width=\"" << stroke_size 
+    << "\" stroke=\"" << stroke_color << "\" fill=\"" << fill_color << "\"/>" << std::endl; 
+ return true; 
+}
+//<ellipse cx="100" cy="50" rx="100" ry="50" />
+bool Write_SVG_ellipse( std::ostream& os, double center_x, double center_y, double rx,double ry, double stroke_size, 
+                       std::string stroke_color , std::string fill_color , double rotation_degrees)
+{
+ os << "  <ellipse cx=\"" << center_x << "\" cy=\"" << center_y << "\" rx=\"" << rx << "\" ry=\"" << ry << "\" stroke-width=\"" << stroke_size 
+    << "\" stroke=\"" << stroke_color << "\" fill=\"" << fill_color << "\" "<<"transform=\"rotate("<<rotation_degrees<<","<<center_x<<","<<center_y<<")\""<<"/>" << std::endl; 
+ return true; 
+}
+bool Write_SVG_rect( std::ostream& os , double UL_corner_x, double UL_corner_y, double width, double height, 
+                     double stroke_size, std::string stroke_color , std::string fill_color )
+{
+ os << "  <rect x=\"" << UL_corner_x << "\" y=\"" << UL_corner_y << "\" width=\"" << width << "\" height=\"" 
+    << height << "\" stroke-width=\"" << stroke_size 
+    << "\" stroke=\"" << stroke_color << "\" fill=\"" << fill_color << "\"/>" << std::endl; 
+ return true; 
+}
 
-std::vector<std::string> my_coloring_function( Cell* );
-
-// custom functions can go here 
-
-void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
-void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
-
-void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
-
+bool Write_SVG_line( std::ostream& os , double start_x, double start_y, double end_x , double end_y, double thickness, 
+                    std::string stroke_color )
+{
+ os << "  <line x1=\"" << start_x << "\" y1=\"" << start_y << "\" x2=\"" << end_x << "\" y2=\"" << end_y << "\" "
+    << "stroke=\"" << stroke_color << "\" stroke-width=\"" << thickness << "\"/>" << std::endl; 
+ return true; 
+}

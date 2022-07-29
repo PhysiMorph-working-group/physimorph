@@ -65,28 +65,26 @@
 ###############################################################################
 */
 
-#include "../core/PhysiCell.h"
-#include "../modules/PhysiCell_standard_modules.h" 
+#include <iostream>
+#include <fstream>
+#include <cstdio>
+#include <cstdlib>
+#include <string>
 
-using namespace BioFVM; 
-using namespace PhysiCell;
+#ifndef _PhysiCell_SVG_h_
+#define _PhysiCell_SVG_h_
 
-// setup functions to help us along 
+bool Write_SVG_start( std::ostream& os, double width, double height );
+bool Write_SVG_end( std::ostream& os );
 
-void create_cell_types( void );
-void setup_tissue( void ); 
+bool Write_SVG_text( std::ostream& os, const char* str , double position_x, double position_y, double font_size , const char* color , const char* font);
+bool Write_SVG_circle( std::ostream& os, double center_x, double center_y, double radius, double stroke_size, std::string stroke_color , std::string fill_color );
+bool Write_SVG_ellipse(std::ostream& os, double center_x, double center_y, double rx, double ry, double stroke_size, std::string stroke_color , std::string fill_color, double rotation );
+//<ellipse cx="100" cy="50" rx="100" ry="50" />
+bool Write_SVG_rect( std::ostream& os , double UL_corner_x, double UL_corner_y, double width, double height,
+                     double stroke_size, std::string stroke_color , std::string fill_color );
 
-// set up the BioFVM microenvironment 
-void setup_microenvironment( void ); 
+bool Write_SVG_line( std::ostream& os , double start_x, double start_y, double end_x , double end_y, double thickness, 
+                    std::string stroke_color );  
 
-// custom pathology coloring function 
-
-std::vector<std::string> my_coloring_function( Cell* );
-
-// custom functions can go here 
-
-void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt );
-void custom_function( Cell* pCell, Phenotype& phenotype , double dt );
-
-void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& phenoOther , double dt ); 
-
+#endif
