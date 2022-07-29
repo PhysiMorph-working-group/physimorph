@@ -77,8 +77,7 @@ std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
 std::vector<double> convert_to_axis(Cell* pCell)
 {
-	pCell->
-	std::vector<double> position = {0,0,0}; 
+	std::vector<double> position = {0,0,0};
 	double pi = 3.141592653589793238462643383279502884;
 	double semimajor = parameters.doubles("major_axis_2a")/2;
 	double ecc = parameters.doubles("eccentricity");

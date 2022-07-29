@@ -92,6 +92,6 @@ void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& 
 
 double dot_product(double vector_a[], double vector_b[]);
 
-void chemotaxis_function( Cell* pCell, Phenotype& phenotype , double dt );
+void custom_chemotaxis_function( Cell* pCell, Phenotype& phenotype , double dt );
 
-void assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_);
+void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_);
