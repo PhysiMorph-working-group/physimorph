@@ -331,10 +331,4 @@ git-push:
 	cp -f ./Makefile ./physimorph/Makefile 
 	cp -f ./VERSION.txt ./physimorph/VERSION.txt 
 	cp -rf ./config/* ./physimorph/config/
-	cd -f ./physimorph/
-	git add
-	git commit -m "new commit $(USER)"
-	git push
-	cd ..
-
 	

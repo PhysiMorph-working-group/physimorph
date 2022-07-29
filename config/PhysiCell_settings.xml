@@ -232,10 +232,10 @@
 	
 	<user_parameters>
 		<random_seed type="int" units="dimensionless" description="">0</random_seed>
-  <number_of_cells type="int" units="none" description="initial number of cells (for each cell type)">1</number_of_cells>
-  <major_axis_2a type="int" units="um" description="">3</major_axis_2a>
-  <starting_cell_volume type="double" units="um^3" description="">24.94</starting_cell_volume>
-  <eccentricity type="double" units="dimensionless" description="">0.0</eccentricity>
+  <number_of_cells type="int" units="none" description="initial number of cells (for each cell type)">9</number_of_cells>
+  <major_axis_2a type="double" units="um" description="">30</major_axis_2a>
+  <starting_cell_volume type="double" units="um^3" description="">2494</starting_cell_volume>
+  <eccentricity type="double" units="dimensionless" description="">0.9</eccentricity>
     </user_parameters>
 	
 </PhysiCell_settings>
