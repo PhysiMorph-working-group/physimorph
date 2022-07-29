@@ -225,20 +225,15 @@ void setup_tissue( void )
 		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
 		for( int n = 0 ; n < 1; n++ )
 		{
-			std::vector<double> position = {0,0,0}; 
-			//position[0] = parameters.doubles("cx");
-			//position[1] = parameters.doubles("cy"); 
-			//position[2] = parameters.doubles("cz");
-			//std::cout<<pC->custom_data["axis_a"]<<" out"<<std::endl;
-			pC = create_cell( *pCD ); 
+      pC = create_cell( *pCD ); 
+			std::vector<double> position (3,0.0);
+			position[0] =pC->custom_data["cx"];
+            position[1] =pC->custom_data["cy"];
+            position[2] =pC->custom_data["cz"];
+            //position[1] = parameters.doubles("cy"); 
 			pC->assign_position( position );
 			convert_eccentricity_to_axis(pC);
 			//resize
-			/* 
-			pC->custom_data["axis_a"]=10;
-			pC->custom_data["axis_b"]=20;
-			pC->custom_data["axis_c"]=30;
-			*/
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 			//pC->set_total_volume(new_volume);
 			std::cout << "vol " << new_volume<<std::endl;;
@@ -320,6 +315,7 @@ void neighbor_interaction(Cell *pCell_v, Cell* pCell_c)
 	return;
 
 }
+
 /*void find_longest_axis(Cell* pCell)
 {
 
@@ -351,7 +347,7 @@ void elongation(Cell* pCell)
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
 
-	custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
+	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }
 

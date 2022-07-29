@@ -557,7 +557,7 @@ void SVG_plot( std::string filename , Microenvironment& M, double z_slice , doub
 			double plot_radius = sqrt( r*r - z*z ); 
 			if(PhysiCell_SVG_options.plot_ellipse==true)
 			{
-				
+				std::cout<< "test"<< pC->custom_data["axis_a"]<< std::endl;	
 				Write_SVG_ellipse(os, (pC->position)[0]-X_lower, (pC->position)[1]-Y_lower, (pC->custom_data["axis_a"]/2), (pC->custom_data["axis_b"]/2), 0.5, Colors[1], Colors[0]);
 			}
 

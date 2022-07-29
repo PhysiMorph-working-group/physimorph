@@ -138,6 +138,8 @@ int main( int argc, char* argv[] )
 	// save a simulation snapshot 
 	PhysiCell_SVG_options.plot_nuclei = false;
 	PhysiCell_SVG_options.colorblind_shape=false;//needs work to get correct letters
+	PhysiCell_SVG_options.plot_ellipse=true;
+	
 	char filename[1024];
 	sprintf( filename , "%s/initial" , PhysiCell_settings.folder.c_str() ); 
 	save_PhysiCell_to_MultiCellDS_v2( filename , microenvironment , PhysiCell_globals.current_time ); 
