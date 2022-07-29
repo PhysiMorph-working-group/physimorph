@@ -237,10 +237,11 @@ void setup_tissue( void )
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 			//pC->set_total_volume(new_volume);
-			std::cout << "vol " << new_volume<<std::endl;;
-			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
-			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
-			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
+			std::cout << "vol " << new_volume<<std::endl;
+			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;
+			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;
+			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;
+			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
 		}
 	}
 	std::cout << "test" << std::endl; 
@@ -347,7 +348,7 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-
+	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*10;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }

@@ -79,7 +79,7 @@ bool Write_SVG_end( std::ostream& os );
 
 bool Write_SVG_text( std::ostream& os, const char* str , double position_x, double position_y, double font_size , const char* color , const char* font);
 bool Write_SVG_circle( std::ostream& os, double center_x, double center_y, double radius, double stroke_size, std::string stroke_color , std::string fill_color );
-bool Write_SVG_ellipse(std::ostream& os, double center_x, double center_y, double rx, double ry, double stroke_size, std::string stroke_color , std::string fill_color );
+bool Write_SVG_ellipse(std::ostream& os, double center_x, double center_y, double rx, double ry, double stroke_size, std::string stroke_color , std::string fill_color, double rotation );
 //<ellipse cx="100" cy="50" rx="100" ry="50" />
 bool Write_SVG_rect( std::ostream& os , double UL_corner_x, double UL_corner_y, double width, double height,
                      double stroke_size, std::string stroke_color , std::string fill_color );
