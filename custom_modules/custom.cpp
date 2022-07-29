@@ -74,25 +74,25 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 //
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
-void convert_eccentricity_to_axis(Cell* pCell)
-{
-	double new_volume=pCell->get_total_volume();
-	double pi = 3.141592653589793238462643383279502884;
-	double semimajor = parameters.doubles("major_axis_2a")/2;
-	double ecc = parameters.doubles("eccentricity");
-	double vol = parameters.doubles("starting_cell_volume");
-	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
-	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
+// void convert_eccentricity_to_axis(Cell* pCell)
+// {
+// 	double new_volume=pCell->get_total_volume();
+// 	double pi = 3.141592653589793238462643383279502884;
+// 	double semimajor = parameters.doubles("major_axis_2a")/2;
+// 	double ecc = parameters.doubles("eccentricity");
+// 	double vol = parameters.doubles("starting_cell_volume");
+// 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
+// 	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
 
-	std::cout << "ecc " << ecc << " ... " << std::endl;
-	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
+// 	std::cout << "ecc " << ecc << " ... " << std::endl;
+// 	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
 
-	pCell->custom_data["axis_a"] = semimajor;
-	pCell->custom_data["axis_b"] = b_axis_calc;
-	pCell->custom_data["axis_c"] = c_axis_calc;
-	return; 
+// 	pCell->custom_data["axis_a"] = semimajor;
+// 	pCell->custom_data["axis_b"] = b_axis_calc;
+// 	pCell->custom_data["axis_c"] = c_axis_calc;
+// 	return; 
 
-}
+// }
 
 
 void custom_update_radius( Cell* pCell, Phenotype& phenotype, double dt )
@@ -217,20 +217,25 @@ void setup_tissue( void )
 		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
 		for( int n = 0 ; n < 1; n++ )
 		{
-			std::vector<double> position = {0,0,0}; 
-			position[0] = parameters.doubles("cx");
-			position[1] = parameters.doubles("cy"); 
-			position[2] = parameters.doubles("cz");
+            pC = create_cell( *pCD ); 
+			std::vector<double> position (3,0.0);
+			position[0] =pC->custom_data["cx"];
+            position[1] =pC->custom_data["cy"];
+            position[2] =pC->custom_data["cz"];
+            //position[1] = parameters.doubles("cy"); 
+			//position[2] = parameters.doubles("cz");
 			//std::cout<<pC->custom_data["axis_a"]<<" out"<<std::endl;
-			pC = create_cell( *pCD ); 
 			pC->assign_position( position );
-			//resize
+			//resiz
 			pC->custom_data["axis_a"]=10;
 			pC->custom_data["axis_b"]=20;
 			pC->custom_data["axis_c"]=30;
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 			//pC->set_total_volume(new_volume);
-			std::cout<< new_volume<<std::endl;;
+			std::cout<< new_volume<<std::endl;
+			std::cout<< pC->custom_data["axis_a"]<<pC->custom_data["axis_b"]<<pC->custom_data["axis_c"]<<std::endl;
+			std::cout<< pC->position<<std::endl;
+
 		}
 	}
 	std::cout << "test" << std::endl; 
@@ -306,26 +311,26 @@ void neighbor_interaction(Cell *pCell_v, Cell* pCell_c)
 	return;
 
 }
-void find_longest_axis(Cell* pCell)
-{
+// void find_longest_axis(Cell* pCell)
+// {
 
-	if(pCell->custom_data["axis_a"]>= pCell->custom_data["axis_b"] &&pCell->custom_data["axis_a"] >= pCell->custom_data["axis_c"]
-	{
-		pCell->custom_data["longest axis"]
-		return; 
-	}
-	if(pCell->custom_data["axis_b"]>= pCell->custom_data["axis_c"] &&pCell->custom_data["axis_b"] >= pCell->custom_data["axis_a"]
-	{
-		return 
-	}
-	if (two-D==true)
-	{
-		if(pCell->custom_data["axis_c"]>= pCell->custom_data["axis_a"] &&pCell->custom_data["axis_c"] >= pCell->custom_data["axis_a"]
-		{
-			return 
-		}
-	}
-}
+// 	if(pCell->custom_data["axis_a"]>= pCell->custom_data["axis_b"] &&pCell->custom_data["axis_a"] >= pCell->custom_data["axis_c"]
+// 	{
+// 		pCell->custom_data["longest axis"]
+// 		return; 
+// 	}
+// 	if(pCell->custom_data["axis_b"]>= pCell->custom_data["axis_c"] &&pCell->custom_data["axis_b"] >= pCell->custom_data["axis_a"]
+// 	{
+// 		return 
+// 	}
+// 	if (two-D==true)
+// 	{
+// 		if(pCell->custom_data["axis_c"]>= pCell->custom_data["axis_a"] &&pCell->custom_data["axis_c"] >= pCell->custom_data["axis_a"]
+// 		{
+// 			return 
+// 		}
+// 	}
+// }
 void elongation(Cell* pCell)
 {
 	//find longest axis
@@ -335,7 +340,7 @@ void elongation(Cell* pCell)
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
 
-	custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
+	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }
 

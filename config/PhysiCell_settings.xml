@@ -211,13 +211,12 @@
 
           </phenotype>
         <custom_data>
-            <axis_a units="um" conserved="false">0.0</axis_a>
-            <axis_b units="um" conserved="false">0.0</axis_b>
-            <axis_c units="um" conserved="false">0.0</axis_c>
+            <axis_a units="um" conserved="false">1.0</axis_a>
+            <axis_b units="um" conserved="false">2.0</axis_b>
+            <axis_c units="um" conserved="false">3.0</axis_c>
             <cx units="um" conserved="false">0.0</cx>
             <cy units="um" conserved="false">0.0</cy>
             <cz units="um" conserved="false">0.0</cz>
-            <test_list units="um" conserved="false">1, 2.0, 3.5</test_list>
         </custom_data>
       </cell_definition>
 
@@ -236,6 +235,10 @@
   <major_axis_2a type="int" units="um" description="">3</major_axis_2a>
   <starting_cell_volume type="double" units="um^3" description="">24.94</starting_cell_volume>
   <eccentricity type="double" units="dimensionless" description="">0.0</eccentricity>
+  <cx units="um" conserved="false">0.0</cx>
+  <cy units="um" conserved="false">0.0</cy>
+  <cz units="um" conserved="false">0.0</cz>
+
     </user_parameters>
 	
 </PhysiCell_settings>
