@@ -198,13 +198,13 @@ double custom_volume_update(double a, double b, double c )
 }
 void setup_tissue( void )
 {
-	double Xmin = microenvironment.mesh.bounding_box[0]; 
-	double Ymin = microenvironment.mesh.bounding_box[1]; 
-	double Zmin = microenvironment.mesh.bounding_box[2]; 
+	double Xmin = microenvironment.mesh.bounding_box[0] + 5; 
+	double Ymin = microenvironment.mesh.bounding_box[1] + 5; 
+	double Zmin = microenvironment.mesh.bounding_box[2] + 5; 
 
-	double Xmax = microenvironment.mesh.bounding_box[3]; 
-	double Ymax = microenvironment.mesh.bounding_box[4]; 
-	double Zmax = microenvironment.mesh.bounding_box[5]; 
+	double Xmax = microenvironment.mesh.bounding_box[3] - 5; 
+	double Ymax = microenvironment.mesh.bounding_box[4] - 5; 
+	double Zmax = microenvironment.mesh.bounding_box[5] - 5; 
 	
 	if( default_microenvironment_options.simulate_2D == true )
 	{
@@ -212,26 +212,34 @@ void setup_tissue( void )
 		Zmax = 0.0; 
 	}
 	
-	double Xrange = Xmax - Xmin; 
-	double Yrange = Ymax - Ymin; 
-	double Zrange = Zmax - Zmin; 
+	double Xrange = Xmax - Xmin - 10; 
+	double Yrange = Ymax - Ymin - 10; 
+	double Zrange = Zmax - Zmin - 10; 
+
+	// calculate grid
+	double Xstep = Xrange/6;
+	double Ystep = Yrange/6;
 	
-	// draw 1 cell 
+
 	
 	Cell* pC;
 	
-	for( int k=0; k < 1 ; k++ )
-	{
-		Cell_Definition* pCD = cell_definitions_by_index[k]; 
+// place ellipsoidal cells
+		Cell_Definition* pCD = find_cell_definition( "ellipsey"); 
 		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		for( int n = 0 ; n < 1; n++ )
+		for( int n = 0 ; n < parameters.ints( "number_of_cells" ); n++ )
 		{
-      pC = create_cell( *pCD ); 
+      		pC = create_cell( *pCD ); 
 			std::vector<double> position (3,0.0);
-			position[0] =pC->custom_data["cx"];
-            position[1] =pC->custom_data["cy"];
-            position[2] =pC->custom_data["cz"];
+			//position[0] =pC->custom_data["cx"];
+            //position[1] =pC->custom_data["cy"];
+            //position[2] =pC->custom_data["cz"];
             //position[1] = parameters.doubles("cy"); 
+			//position[0] = Xmin+ n*Xstep;
+			position[0] = Xmin+ Xrange*UniformRandom();
+			position[1] = Ymin+ Yrange*UniformRandom(); 
+			//position[1] = Ymin+ n*Ystep;
+
 			pC->assign_position( position );
 			convert_eccentricity_to_axis(pC);
 			//resize
@@ -242,8 +250,27 @@ void setup_tissue( void )
 			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
 			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
 		}
-	}
-	std::cout << "test" << std::endl; 
+
+// place secretor cell
+		Cell_Definition* pCs = find_cell_definition( "secretor_cell"); 
+		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+		for( int n = 0 ; n < parameters.ints( "number_secretor_cells" ); n++ )
+		{
+      		pC = create_cell( *pCs ); 
+			std::vector<double> position (3,0.0);
+		    position[0] = Xmax-Xstep;
+            position[1] = 0;
+            position[2] = 0;
+            //position[1] = parameters.doubles("cy"); 
+			pC->assign_position( position );
+			convert_eccentricity_to_axis(pC);
+			//resize
+			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
+			pC->is_movable = false;
+
+		}
+	//}
+
 	
 	// load cells from your CSV file (if enabled)
 	load_cells_from_pugixml(); 	
