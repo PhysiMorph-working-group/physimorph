@@ -66,6 +66,7 @@
 */
 
 #include "./custom.h"
+
 static double four_thirds_pi =  4.188790204786391;
 // ellipse radius
 double ellipse_radius= 1.0;
@@ -74,18 +75,26 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 //
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
+
 void convert_eccentricity_to_axis(Cell* pCell)
 {
 	double new_volume=pCell->get_total_volume();
 	double pi = 3.141592653589793238462643383279502884;
 	double semimajor = parameters.doubles("major_axis_2a")/2;
 	double ecc = parameters.doubles("eccentricity");
-	double vol = parameters.doubles("starting_cell_volume");
+	//double vol = parameters.doubles("starting_cell_volume");
+	double vol=pCell->get_total_volume();
 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
-	double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
+	//double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
+	double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
 
-	std::cout << "ecc " << ecc << " ... " << std::endl;
-	std::cout << "bax " << b_axis_calc << " ... " << std::endl; 
+	/*
+	std::cout << "ecc " << ecc  << std::endl;
+	std::cout << "2aax " << parameters.doubles("major_axis_2a") << std::endl;
+	std::cout << "aax " << semimajor  << std::endl; 
+	std::cout << "bax " << b_axis_calc  << std::endl; 
+	std::cout << "cax " << c_axis_calc << std::endl; 
+	*/
 
 	pCell->custom_data["axis_a"] = semimajor;
 	pCell->custom_data["axis_b"] = b_axis_calc;
@@ -217,26 +226,22 @@ void setup_tissue( void )
 		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
 		for( int n = 0 ; n < 1; n++ )
 		{
-            pC = create_cell( *pCD ); 
+      pC = create_cell( *pCD ); 
 			std::vector<double> position (3,0.0);
 			position[0] =pC->custom_data["cx"];
             position[1] =pC->custom_data["cy"];
             position[2] =pC->custom_data["cz"];
             //position[1] = parameters.doubles("cy"); 
-			//position[2] = parameters.doubles("cz");
-			//std::cout<<pC->custom_data["axis_a"]<<" out"<<std::endl;
 			pC->assign_position( position );
-			//resiz
-			pC->custom_data["axis_a"]=10;
-			pC->custom_data["axis_b"]=20;
-			pC->custom_data["axis_c"]=30;
+			convert_eccentricity_to_axis(pC);
+			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
+			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 			//pC->set_total_volume(new_volume);
-			std::cout<< new_volume<<std::endl;
-			std::cout<< pC->custom_data["axis_a"]<<pC->custom_data["axis_b"]<<pC->custom_data["axis_c"]<<std::endl;
-			std::cout<< pC->position<<std::endl;
-			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
-
+			std::cout << "vol " << new_volume<<std::endl;;
+			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
+			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
+			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
 		}
 	}
 	std::cout << "test" << std::endl; 
@@ -312,26 +317,29 @@ void neighbor_interaction(Cell *pCell_v, Cell* pCell_c)
 	return;
 
 }
-// void find_longest_axis(Cell* pCell)
-// {
 
-// 	if(pCell->custom_data["axis_a"]>= pCell->custom_data["axis_b"] &&pCell->custom_data["axis_a"] >= pCell->custom_data["axis_c"]
-// 	{
-// 		pCell->custom_data["longest axis"]
-// 		return; 
-// 	}
-// 	if(pCell->custom_data["axis_b"]>= pCell->custom_data["axis_c"] &&pCell->custom_data["axis_b"] >= pCell->custom_data["axis_a"]
-// 	{
-// 		return 
-// 	}
-// 	if (two-D==true)
-// 	{
-// 		if(pCell->custom_data["axis_c"]>= pCell->custom_data["axis_a"] &&pCell->custom_data["axis_c"] >= pCell->custom_data["axis_a"]
-// 		{
-// 			return 
-// 		}
-// 	}
-// }
+/*void find_longest_axis(Cell* pCell)
+{
+
+	if(pCell->custom_data["axis_a"]>= pCell->custom_data["axis_b"] &&pCell->custom_data["axis_a"] >= pCell->custom_data["axis_c"])
+	{
+		pCell->custom_data["longest axis"];
+		return; 
+	}
+	if(pCell->custom_data["axis_b"]>= pCell->custom_data["axis_c"] &&pCell->custom_data["axis_b"] >= pCell->custom_data["axis_a"])
+	{
+		return; 
+	}
+	if (two-D==true)
+	{
+		if(pCell->custom_data["axis_c"]>= pCell->custom_data["axis_a"] &&pCell->custom_data["axis_c"] >= pCell->custom_data["axis_a"])
+		{
+			return; 
+		}
+	}
+}
+*/
+
 void elongation(Cell* pCell)
 {
 	//find longest axis
@@ -340,7 +348,6 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	std::cout<<PhysiCell_globals.current_time<<std::endl;
 	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*10;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
@@ -353,3 +360,63 @@ void contact_function( Cell* pMe, Phenotype& phenoMe , Cell* pOther, Phenotype& 
 { return; } 
 
 
+
+
+// void update_axis( Cell* pCell, Phenotype& phenotype, double dt )
+// {
+// 	static double four_thirds_pi =  4.188790204786391;
+// 	double new_vol = phenotype.volume.total; 
+// 	double scale_fac = new_vol - four_thirds_pi*pCell->custom_data["axis_a"]*pC->custom_data["axis_b"]*pC->custom_data["axis_c"]; 
+// 	scale_fac = pow( scale_fac , 0.333333333333333333333333333333333333333 ); 
+// 	pC->custom_data["axis_a"] *= scale_fac;
+// 	pC->custom_data["axis_b"] *= scale_fac;
+// 	pC->custom_data["axis_c"] *= scale_fac;
+// 	return; 
+// }
+
+
+void custom_chemotaxis_function( Cell* pCell, Phenotype& phenotype , double dt )
+{
+	// bias direction is gradient for the indicated substrate 
+	phenotype.motility.migration_bias_direction = pCell->nearest_gradient(phenotype.motility.chemotaxis_index);
+
+	// change cell orientation
+	custom_assign_orientation(pCell, phenotype, dt);
+
+	// if orientation is aligned to bias
+	// a.b/|a.b|
+	double dot_prod = 0;
+    for (int i = 0; i < 3; i++) {
+   		dot_prod += pCell->state.orientation[i] * phenotype.motility.migration_bias_direction[i];
+	}
+
+	if ((dot_prod) <= 1) {
+		// move up or down gradient based on this direction 
+		phenotype.motility.migration_bias_direction *= phenotype.motility.chemotaxis_direction; 
+		
+		// normalize 
+		normalize( &( phenotype.motility.migration_bias_direction ) );
+	} else {
+		custom_assign_orientation(pCell, phenotype, dt);
+	}
+	return;
+}
+
+void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
+{
+	// later - set true/false for which method
+
+	// get bias direction and turn instantaneously
+	pCell->state.orientation[0] = phenotype.motility.migration_bias_direction[0];
+	pCell->state.orientation[1] = phenotype.motility.migration_bias_direction[1];
+	pCell->state.orientation[2] = 1;
+
+	// get bias direction and turn incrementaly 
+	pCell->state.orientation[0] += 0.1*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.1*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[2] = 1;
+
+	normalize( &( pCell->state.orientation ) );
+
+    return;
+}
