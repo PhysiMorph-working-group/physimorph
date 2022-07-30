@@ -363,7 +363,6 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*5;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }
@@ -431,11 +430,13 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
 	}
 
 	// get bias direction and turn incrementaly 
-	pCell->state.orientation[0] += 0.1*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
-	pCell->state.orientation[1] += 0.1*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[0] += 0.05*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.05*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
 	pCell->state.orientation[2] = 1;
 
 	normalize( &( pCell->state.orientation ) );
+    
+    pCell->custom_data["rotation_about_z_axis"] = atan(pCell->state.orientation[1]/pCell->state.orientation[0])*180.0/3.14159265358;
 
     return;
 }
