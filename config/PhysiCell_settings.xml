@@ -263,7 +263,7 @@
           </death>
 
           <volume>
-            <total units="micron^3">2494</total>
+            <total units="micron^3">1000</total>
             <fluid_fraction units="dimensionless">0.75</fluid_fraction>
             <nuclear units="micron^3">540</nuclear>
             <fluid_change_rate units="1/min">0.05</fluid_change_rate>
@@ -383,5 +383,6 @@
         <starting_cell_volume type="double" units="um^3" description="">2494</starting_cell_volume>
         <eccentricity type="double" units="dimensionless" description="">0.9</eccentricity>
         <number_secretor_cells type="int" units="cells" description="">1</number_secretor_cells>
+        <eccentricity_secretor type="double" units="dimensionless" description="">0</eccentricity_secretor>
     </user_parameters>
 </PhysiCell_settings>

@@ -76,12 +76,11 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
 
-void convert_eccentricity_to_axis(Cell* pCell)
+void convert_eccentricity_to_axis(Cell* pCell, double ecc)
 {
 	double new_volume=pCell->get_total_volume();
 	double pi = 3.141592653589793238462643383279502884;
 	double semimajor = parameters.doubles("major_axis_2a")/2;
-	double ecc = parameters.doubles("eccentricity");
 	double vol=pCell->get_total_volume();
 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
     double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
@@ -226,14 +225,16 @@ void setup_tissue( void )
 			position[1] = Ymin+ Yrange*UniformRandom(); 
 
 			pC->assign_position( position );
-			convert_eccentricity_to_axis(pC);
+			convert_eccentricity_to_axis(pC, parameters.doubles("eccentricity"));
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 
+			/*
 			std::cout << "vol " << new_volume<<std::endl;;
 			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
 			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
 			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
+			*/
 		}
 
 // place secretor cell
@@ -248,7 +249,7 @@ void setup_tissue( void )
             position[2] = 0;
             //position[1] = parameters.doubles("cy"); 
 			pC->assign_position( position );
-			convert_eccentricity_to_axis(pC);
+			convert_eccentricity_to_axis(pC, parameters.doubles("eccentricity_secretor"));
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 			pC->is_movable = false;
