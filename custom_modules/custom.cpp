@@ -226,6 +226,7 @@ void setup_tissue( void )
 
 			pC->assign_position( position );
 			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
+			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 
@@ -360,7 +361,7 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-
+	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*10;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }

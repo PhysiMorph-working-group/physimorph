@@ -558,7 +558,7 @@ void SVG_plot( std::string filename , Microenvironment& M, double z_slice , doub
 			if(PhysiCell_SVG_options.plot_ellipse==true)
 			{
 				std::cout<< "test"<< pC->custom_data["axis_a"]<< std::endl;	
-				Write_SVG_ellipse(os, (pC->position)[0]-X_lower, (pC->position)[1]-Y_lower, (pC->custom_data["axis_a"]/2), (pC->custom_data["axis_b"]/2), 0.5, Colors[1], Colors[0]);
+				Write_SVG_ellipse(os, (pC->position)[0]-X_lower, (pC->position)[1]-Y_lower, (pC->custom_data["axis_a"]/2), (pC->custom_data["axis_b"]/2), 0.5, Colors[1], Colors[0], pC->custom_data["rotation_about_z_axis"]);
 			}
 
 			else
@@ -765,7 +765,7 @@ void create_plot_legend( std::string filename , std::vector<std::string> (*cell_
 		if(PhysiCell_SVG_options.plot_ellipse)
 		{
 			// place a big circle with cytoplasm colors 
-			Write_SVG_ellipse(os,cursor_x, cursor_y , temp_cell_radius/2 ,temp_cell_radius, 1.0 , colors[1] , colors[0] ); 
+			Write_SVG_ellipse(os,cursor_x, cursor_y , temp_cell_radius/2 ,temp_cell_radius, 1.0 , colors[1] , colors[0],30); 
 			// place a small circle with nuclear colors 
 			//Write_SVG_circle(os,cursor_x, cursor_y , 0.5*temp_cell_radius , 1.0 , colors[2] , colors[3] ); 	
 		}
