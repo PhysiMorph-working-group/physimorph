@@ -76,25 +76,15 @@ std::vector<std::vector<double>> matrix{{1,0,0},{0,1,0},{0,0,1}};
 std::vector<double> a_axis(3,0.0);
 std::vector<double> b_axis(3,0.0);
 
-void convert_eccentricity_to_axis(Cell* pCell)
+void convert_eccentricity_to_axis(Cell* pCell, double major_axis, double ecc)
 {
 	double new_volume=pCell->get_total_volume();
 	double pi = 3.141592653589793238462643383279502884;
-	double semimajor = parameters.doubles("major_axis_2a")/2;
-	double ecc = parameters.doubles("eccentricity");
-	//double vol = parameters.doubles("starting_cell_volume");
+	double semimajor = major_axis/2;
 	double vol=pCell->get_total_volume();
 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
-	//double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
-	double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
+    double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
 
-	/*
-	std::cout << "ecc " << ecc  << std::endl;
-	std::cout << "2aax " << parameters.doubles("major_axis_2a") << std::endl;
-	std::cout << "aax " << semimajor  << std::endl; 
-	std::cout << "bax " << b_axis_calc  << std::endl; 
-	std::cout << "cax " << c_axis_calc << std::endl; 
-	*/
 
 	pCell->custom_data["axis_a"] = semimajor;
 	pCell->custom_data["axis_b"] = b_axis_calc;
@@ -198,13 +188,13 @@ double custom_volume_update(double a, double b, double c )
 }
 void setup_tissue( void )
 {
-	double Xmin = microenvironment.mesh.bounding_box[0]; 
-	double Ymin = microenvironment.mesh.bounding_box[1]; 
-	double Zmin = microenvironment.mesh.bounding_box[2]; 
+	double Xmin = microenvironment.mesh.bounding_box[0] + 5; 
+	double Ymin = microenvironment.mesh.bounding_box[1] + 5; 
+	double Zmin = microenvironment.mesh.bounding_box[2] + 5; 
 
-	double Xmax = microenvironment.mesh.bounding_box[3]; 
-	double Ymax = microenvironment.mesh.bounding_box[4]; 
-	double Zmax = microenvironment.mesh.bounding_box[5]; 
+	double Xmax = microenvironment.mesh.bounding_box[3] - 5; 
+	double Ymax = microenvironment.mesh.bounding_box[4] - 5; 
+	double Zmax = microenvironment.mesh.bounding_box[5] - 5; 
 	
 	if( default_microenvironment_options.simulate_2D == true )
 	{
@@ -212,39 +202,62 @@ void setup_tissue( void )
 		Zmax = 0.0; 
 	}
 	
-	double Xrange = Xmax - Xmin; 
-	double Yrange = Ymax - Ymin; 
-	double Zrange = Zmax - Zmin; 
+	double Xrange = Xmax - Xmin - 10; 
+	double Yrange = Ymax - Ymin - 10; 
+	double Zrange = Zmax - Zmin - 10; 
+
+	// calculate grid
+	double Xstep = Xrange/6;
+	double Ystep = Yrange/6;
 	
-	// draw 1 cell 
+
 	
 	Cell* pC;
 	
-	for( int k=0; k < 1 ; k++ )
-	{
-		Cell_Definition* pCD = cell_definitions_by_index[k]; 
+// place ellipsoidal cells
+		Cell_Definition* pCD = find_cell_definition( "ellipsey"); 
 		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		for( int n = 0 ; n < 1; n++ )
+		for( int n = 0 ; n < parameters.ints( "number_of_cells" ); n++ )
 		{
-      pC = create_cell( *pCD ); 
+      		pC = create_cell( *pCD ); 
 			std::vector<double> position (3,0.0);
-			position[0] =pC->custom_data["cx"];
-            position[1] =pC->custom_data["cy"];
-            position[2] =pC->custom_data["cz"];
-            //position[1] = parameters.doubles("cy"); 
+			position[0] = Xmin+ Xrange*UniformRandom();
+			position[1] = Ymin+ Yrange*UniformRandom(); 
+
 			pC->assign_position( position );
-			convert_eccentricity_to_axis(pC);
+			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
 			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
-			//pC->set_total_volume(new_volume);
+
+			/*
 			std::cout << "vol " << new_volume<<std::endl;;
 			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
 			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
 			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
+			*/
 		}
-	}
-	std::cout << "test" << std::endl; 
+
+// place secretor cell
+		Cell_Definition* pCs = find_cell_definition( "secretor_cell"); 
+		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+		for( int n = 0 ; n < parameters.ints( "number_secretor_cells" ); n++ )
+		{
+      		pC = create_cell( *pCs ); 
+			std::vector<double> position (3,0.0);
+		    position[0] = Xmax-Xstep;
+            position[1] = 0;
+            position[2] = 0;
+            //position[1] = parameters.doubles("cy"); 
+			pC->assign_position( position );
+			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a_secretor"), parameters.doubles("eccentricity_secretor"));
+			//resize
+			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
+			pC->is_movable = false;
+
+		}
+	//}
+
 	
 	// load cells from your CSV file (if enabled)
 	load_cells_from_pugixml(); 	
