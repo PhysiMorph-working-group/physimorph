@@ -255,7 +255,7 @@ void setup_tissue( void )
 			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a_secretor"), parameters.doubles("eccentricity_secretor"));
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
-			pC->is_movable = false;
+			//pC->is_movable = false;
 
 		}
 	//}
