@@ -109,10 +109,10 @@ bool Write_SVG_circle( std::ostream& os, double center_x, double center_y, doubl
 }
 //<ellipse cx="100" cy="50" rx="100" ry="50" />
 bool Write_SVG_ellipse( std::ostream& os, double center_x, double center_y, double rx,double ry, double stroke_size, 
-                       std::string stroke_color , std::string fill_color )
+                       std::string stroke_color , std::string fill_color , double rotation_degrees)
 {
  os << "  <ellipse cx=\"" << center_x << "\" cy=\"" << center_y << "\" rx=\"" << rx << "\" ry=\"" << ry << "\" stroke-width=\"" << stroke_size 
-    << "\" stroke=\"" << stroke_color << "\" fill=\"" << fill_color << "\"/>" << std::endl; 
+    << "\" stroke=\"" << stroke_color << "\" fill=\"" << fill_color << "\" "<<"transform=\"rotate("<<rotation_degrees<<","<<center_x<<","<<center_y<<")\""<<"/>" << std::endl; 
  return true; 
 }
 bool Write_SVG_rect( std::ostream& os , double UL_corner_x, double UL_corner_y, double width, double height, 
