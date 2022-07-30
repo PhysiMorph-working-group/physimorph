@@ -82,19 +82,10 @@ void convert_eccentricity_to_axis(Cell* pCell)
 	double pi = 3.141592653589793238462643383279502884;
 	double semimajor = parameters.doubles("major_axis_2a")/2;
 	double ecc = parameters.doubles("eccentricity");
-	//double vol = parameters.doubles("starting_cell_volume");
 	double vol=pCell->get_total_volume();
 	double b_axis_calc = semimajor*pow( (1-pow(ecc,2)), 0.5);
-	//double c_axis_calc = (3*vol)/( 4*pi*pow(semimajor,2)*pow((1-ecc),0.5));
-	double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
+    double c_axis_calc = (3*vol)/( 4*pi*semimajor*b_axis_calc);
 
-	/*
-	std::cout << "ecc " << ecc  << std::endl;
-	std::cout << "2aax " << parameters.doubles("major_axis_2a") << std::endl;
-	std::cout << "aax " << semimajor  << std::endl; 
-	std::cout << "bax " << b_axis_calc  << std::endl; 
-	std::cout << "cax " << c_axis_calc << std::endl; 
-	*/
 
 	pCell->custom_data["axis_a"] = semimajor;
 	pCell->custom_data["axis_b"] = b_axis_calc;
@@ -231,20 +222,14 @@ void setup_tissue( void )
 		{
       		pC = create_cell( *pCD ); 
 			std::vector<double> position (3,0.0);
-			//position[0] =pC->custom_data["cx"];
-            //position[1] =pC->custom_data["cy"];
-            //position[2] =pC->custom_data["cz"];
-            //position[1] = parameters.doubles("cy"); 
-			//position[0] = Xmin+ n*Xstep;
 			position[0] = Xmin+ Xrange*UniformRandom();
 			position[1] = Ymin+ Yrange*UniformRandom(); 
-			//position[1] = Ymin+ n*Ystep;
 
 			pC->assign_position( position );
 			convert_eccentricity_to_axis(pC);
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
-			//pC->set_total_volume(new_volume);
+
 			std::cout << "vol " << new_volume<<std::endl;;
 			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
 			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
