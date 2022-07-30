@@ -363,7 +363,7 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*10;
+	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*5;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
 
 }
