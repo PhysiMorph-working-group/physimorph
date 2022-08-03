@@ -96,3 +96,4 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt );
 
 void custom_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double dt);
 void custom_update_motility_vector(Cell* pCell, Phenotype& phenotype, double dt );
+void elongation(Cell* pCell, double count);

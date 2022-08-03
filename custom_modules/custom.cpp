@@ -183,9 +183,13 @@ void setup_microenvironment( void )
 	
 	return; 
 }
+
 double custom_volume_update(double a, double b, double c )
 {
-	double ellipsoid_volume= four_thirds_pi*a*b*c;
+    double ellipsoid_volume= a;
+    ellipsoid_volume*=b;
+    ellipsoid_volume*=c;
+    ellipsoid_volume*=four_thirds_pi;
 	return ellipsoid_volume;
 }
 void setup_tissue( void )
@@ -363,9 +367,12 @@ void elongation(Cell* pCell)
 }
 void phenotype_function( Cell* pCell, Phenotype& phenotype, double dt )
 {
-	pCell->custom_data["rotation_about_z_axis"]= PhysiCell_globals.current_time*5;
 	//custom_volume_update(pCell->custom_data["axis_a"], pCell->custom_data["axis_b"], pCell->custom_data["axis_c"]);
-
+    int temp = 0.0;
+    temp = PhysiCell_globals.current_time/50;
+    temp = temp % 2;
+    pCell->custom_data["stretch_direction"] = 2*temp-1;
+    std::cout << pCell->custom_data["stretch_direction"]<< std::endl;
 }
 
 void custom_function( Cell* pCell, Phenotype& phenotype , double dt )
@@ -431,20 +438,28 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
 	}
 
 	// get bias direction and turn incrementaly 
-	pCell->state.orientation[0] += 0.1*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
-	pCell->state.orientation[1] += 0.1*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[0] += 0.05*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.05*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
 	pCell->state.orientation[2] = 1;
 
 	normalize( &( pCell->state.orientation ) );
+    
+    pCell->custom_data["rotation_about_z_axis"] = atan(pCell->state.orientation[1]/pCell->state.orientation[0])*180.0/3.14159265358;
 
     return;
 }
 
 
+static double maxab = 5.0;
+static double minab = 1.0;
 
 
 void custom_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double dt)
 {
+    double shiftellipse = 0.0;
+    std::vector<double> position (3,0.0);
+
+    
 	if( pCell->functions.add_cell_basement_membrane_interactions )
 	{
 		pCell->functions.add_cell_basement_membrane_interactions(pCell, phenotype,dt);
@@ -477,11 +492,42 @@ void custom_update_cell_velocity( Cell* pCell, Phenotype& phenotype, double dt)
 			pCell->add_potentials(*neighbor);
 		}
 	}
-
+    double stretch = .01;
 	custom_update_motility_vector(pCell, phenotype, dt); 
-	pCell->velocity += phenotype.motility.motility_vector; 
-	
-	return; 
+	pCell->velocity += phenotype.motility.motility_vector;
+    stretch*=pCell->custom_data["squishy"];
+    if ((phenotype.motility.chemotaxis_direction*pCell->custom_data["stretch_direction"])>0)
+    {
+        stretch*=(maxab - pCell->custom_data["axis_a"]/pCell->custom_data["axis_b"]);
+        stretch/=maxab;
+    }
+    else
+    {
+        stretch*=(pCell->custom_data["axis_a"]/pCell->custom_data["axis_b"]-minab);
+        stretch/=pCell->custom_data["axis_a"];
+        stretch*=pCell->custom_data["axis_b"];
+    }
+    
+    // stretch*=pCell->custom_data["stretch_direction"];
+    // stretch*=phenotype.motility.chemotaxis_direction;
+    
+    shiftellipse = pCell->custom_data["axis_a"];
+    shiftellipse *=stretch;
+    position[0] +=pCell->state.orientation[0];
+    position[1] +=pCell->state.orientation[1];
+    position *= shiftellipse;
+    
+    position *= phenotype.motility.chemotaxis_direction;
+    position *= pCell->custom_data["stretch_direction"];
+    
+    position[0] += pCell->position[0];
+    position[1] += pCell->position[1];
+
+    pCell->assign_position( position );
+    pCell->custom_data["axis_a"]*=(1+stretch);
+    pCell->custom_data["axis_b"]/=(1+stretch);
+
+	return;
 	}
 
 
@@ -516,7 +562,7 @@ void custom_update_motility_vector(Cell* pCell, Phenotype& phenotype, double dt_
 		phenotype.motility.motility_vector *= phenotype.motility.migration_bias*dot_prod; // motility = bias*bias_vector 
 		// scaled above by amount orientated towards chemotaxis
 		
-		double one_minus_bias = 1.0 - phenotype.motility.migration_bias*dot_prod; 
+		double one_minus_bias = 1.0 - phenotype.motility.migration_bias*dot_prod*pCell->custom_data["squishy"];
 		
 		axpy( &(phenotype.motility.motility_vector), one_minus_bias, randvec ); // motility = (1-bias)*randvec + bias*bias_vector
 		
@@ -527,3 +573,27 @@ void custom_update_motility_vector(Cell* pCell, Phenotype& phenotype, double dt_
 	}	
 	return; 
 } 
+int n = 1;
+void elongation(Cell* pCell, double count)
+{
+    //convert_eccentricity_to_axis(pCell, longest_axis/2, ecc);
+    if (n==1 &&pCell->custom_data["axis_a"]<pCell->custom_data["axis_b"]*5.0)
+    {
+        pCell->custom_data["axis_a"]*=1.0201;
+        pCell->custom_data["axis_b"]/=1.01;
+        pCell->custom_data["axis_c"]/=1.01;
+    }
+    else if (pCell->custom_data["axis_a"]>pCell->custom_data["axis_b"]*1.0201)
+    {
+        n= -1;
+        pCell->custom_data["axis_a"]/=1.0201;
+        pCell->custom_data["axis_b"]*=1.01;
+        pCell->custom_data["axis_c"]*=1.01;
+    }
+    else
+    {
+        n=1;
+    }
+    return;
+}
+
