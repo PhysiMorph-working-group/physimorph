@@ -13,12 +13,12 @@
 	</domain>
 	
 	<overall>
-		<max_time units="min">1200</max_time>
+		<max_time units="min">100</max_time>
 		<time_units>min</time_units>
 		<space_units>micron</space_units>
 	
 		<dt_diffusion units="min">0.01</dt_diffusion>
-		<dt_mechanics units="min">0.1</dt_mechanics>
+		<dt_mechanics units="min">0.01</dt_mechanics>
 		<dt_phenotype units="min">1</dt_phenotype>	
 	</overall>
 	
@@ -30,15 +30,16 @@
 		<folder>output</folder>  
 
 		<full_data>
-			<interval units="min">10</interval>
+			<interval units="min">120</interval>
 			<enable>true</enable>
 		</full_data>
 		
 		<SVG>
-			<interval units="min">10</interval>
+			<interval units="min">1</interval>
 			<enable>true</enable>
 		</SVG>
 		
+
 		<legacy_data>
 			<enable>false</enable>
 		</legacy_data>
@@ -46,7 +47,7 @@
 	
 	<options>
 		<legacy_random_points_on_sphere_in_divide>false</legacy_random_points_on_sphere_in_divide>
-        <virtual_wall_at_domain_edge>false</virtual_wall_at_domain_edge>
+        <virtual_wall_at_domain_edge>true</virtual_wall_at_domain_edge>
 	</options>	
 
 	<microenvironment_setup>
