@@ -228,9 +228,17 @@ void setup_tissue( void )
 
 			pC->assign_position( position );
 			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
-			pC->custom_data["rotation_about_z_axis"]=30;//in degrees
+
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
+
+			// set orientation
+			pC->state.orientation[0] = 1;
+			pC->state.orientation[1] = 1;
+			std::cout << "state.orientation= " << pC->state.orientation << " ... \n" << std::endl; 
+			
+			pC->custom_data["rotation_about_z_axis"]=atan(pC->state.orientation[1]/pC->state.orientation[0])*180.0/3.14159265358;    //in degrees
+			std::cout << "rotation_about_z_axis= " << pC->custom_data["rotation_about_z_axis"] << " ... \n" << std::endl; 
 
 			/*
 			std::cout << "vol " << new_volume<<std::endl;;
@@ -255,7 +263,7 @@ void setup_tissue( void )
 			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a_secretor"), parameters.doubles("eccentricity_secretor"));
 			//resize
 			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
-			pC->is_movable = false;
+			//pC->is_movable = false;
 
 		}
 	//}
@@ -418,10 +426,21 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
 	//pCell->state.orientation[1] = phenotype.motility.migration_bias_direction[1];
 	//pCell->state.orientation[2] = 1;
 
+	//std::cout << "Orientation x = " << pCell->state.orientation[0] << " ... " << std::endl;
+	//std::cout << "Orientation y = " << pCell->state.orientation[1] << " ... " << std::endl;
+
 	double dot_prod = 0;
 	for (int i = 0; i < 3; i++) {
 		dot_prod += pCell->state.orientation[i] * phenotype.motility.migration_bias_direction[i];
 	}
+
+	//std::cout << "Orientation= " << pCell->state.orientation[0] << " ... " << std::endl; 
+	// std::cout << "dot_prod " << dot_prod << " ... " << std::endl; 
+
+	// get bias direction and turn incrementaly 
+	pCell->state.orientation[0] += 0.001*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.001*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[2] = 1;
 
 	// check if facing the opposite direction. If so, switch
 	if (dot_prod < 0) {
@@ -429,14 +448,10 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
 		pCell->state.orientation[1] *= -1;
 	}
 
-	// get bias direction and turn incrementaly 
-	pCell->state.orientation[0] += 0.05*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
-	pCell->state.orientation[1] += 0.05*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
-	pCell->state.orientation[2] = 1;
-
 	normalize( &( pCell->state.orientation ) );
     
     pCell->custom_data["rotation_about_z_axis"] = atan(pCell->state.orientation[1]/pCell->state.orientation[0])*180.0/3.14159265358;
+	//std::cout << "rotation_about_z_axis= " << pCell->custom_data["rotation_about_z_axis"] << " ... \n" << std::endl; 
 
     return;
 }
