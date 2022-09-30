@@ -217,61 +217,85 @@ void setup_tissue( void )
 	Cell* pC;
 	
 // place ellipsoidal cells
-		Cell_Definition* pCD = find_cell_definition( "ellipsey"); 
-		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		for( int n = 0 ; n < parameters.ints( "number_of_cells" ); n++ )
-		{
-      		pC = create_cell( *pCD ); 
-			std::vector<double> position (3,0.0);
-			position[0] = Xmin+ Xrange*UniformRandom();
-			position[1] = Ymin+ Yrange*UniformRandom(); 
+	Cell_Definition* pCD = find_cell_definition( "ellipsey"); 
+	std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+	for( int n = 0 ; n < parameters.ints( "number_of_cells" ); n++ )
+	{
+		pC = create_cell( *pCD ); 
+		std::vector<double> position (3,0.0);
+		position[0] = Xmin+ Xrange*UniformRandom();
+		position[1] = Ymin+ Yrange*UniformRandom(); 
 
-			pC->assign_position( position );
-			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
+		pC->assign_position( position );
+		convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
 
-			//resize
-			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
+		//resize
+		double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
 
-			// set orientation
-			pC->state.orientation[0] = 1;
-			pC->state.orientation[1] = 1;
-			std::cout << "state.orientation= " << pC->state.orientation << " ... \n" << std::endl; 
-			
-			pC->custom_data["rotation_about_z_axis"]=atan(pC->state.orientation[1]/pC->state.orientation[0])*180.0/3.14159265358;    //in degrees
-			std::cout << "rotation_about_z_axis= " << pC->custom_data["rotation_about_z_axis"] << " ... \n" << std::endl; 
+		// set orientation
+		pC->state.orientation[0] = 1;
+		pC->state.orientation[1] = 1;
+		std::cout << "state.orientation= " << pC->state.orientation << " ... \n" << std::endl; 
+		
+		pC->custom_data["rotation_about_z_axis"]=atan(pC->state.orientation[1]/pC->state.orientation[0])*180.0/3.14159265358;    //in degrees
+		std::cout << "rotation_about_z_axis= " << pC->custom_data["rotation_about_z_axis"] << " ... \n" << std::endl; 
 
-			/*
-			std::cout << "vol " << new_volume<<std::endl;;
-			std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
-			std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
-			std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
-			*/
-		}
+		/*
+		std::cout << "vol " << new_volume<<std::endl;;
+		std::cout << "aax " << pC->custom_data["axis_a"]<<std::endl;;
+		std::cout << "bax " << pC->custom_data["axis_b"]<<std::endl;;
+		std::cout << "cax " << pC->custom_data["axis_c"]<<std::endl;;
+		*/
+	}
 
 // place secretor cell
-		Cell_Definition* pCs = find_cell_definition( "secretor_cell"); 
-		std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
-		for( int n = 0 ; n < parameters.ints( "number_secretor_cells" ); n++ )
-		{
-      		pC = create_cell( *pCs ); 
-			std::vector<double> position (3,0.0);
-		    position[0] = Xmax-Xstep;
-            position[1] = 0;
-            position[2] = 0;
-            //position[1] = parameters.doubles("cy"); 
-			pC->assign_position( position );
-			convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a_secretor"), parameters.doubles("eccentricity_secretor"));
-			//resize
-			double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
-			//pC->is_movable = false;
+	Cell_Definition* pCs = find_cell_definition( "secretor_cell"); 
+	std::cout << "Placing cells of type " << pCD->name << " ... " << std::endl; 
+	for( int n = 0 ; n < parameters.ints( "number_secretor_cells" ); n++ )
+	{
+		pC = create_cell( *pCs ); 
+		std::vector<double> position (3,0.0);
+		position[0] = Xmax-3*Xstep;
+		position[1] = 100;
+		position[2] = 0;
+		//position[1] = parameters.doubles("cy"); 
+		pC->assign_position( position );
+		convert_eccentricity_to_axis(pC, parameters.doubles("major_axis_2a_secretor"), parameters.doubles("eccentricity_secretor"));
+		//resize
+		double new_volume=custom_volume_update(pC->custom_data["axis_a"], pC->custom_data["axis_b"], pC->custom_data["axis_c"]);
+		//pC->is_movable = false;
 
-		}
-	//}
+	}
 
 	
 	// load cells from your CSV file (if enabled)
-	load_cells_from_pugixml(); 	
-	
+	load_cells_from_pugixml();
+
+	Cell* pCx = NULL;
+	for( int i=0; i < (*all_cells).size(); i++ )
+		{
+		pCx = (*all_cells)[i];
+
+		if (pCx->type == 0) {
+			convert_eccentricity_to_axis(pCx, parameters.doubles("major_axis_2a"), parameters.doubles("eccentricity"));
+
+			//resize
+			double new_volume=custom_volume_update(pCx->custom_data["axis_a"], pCx->custom_data["axis_b"], pCx->custom_data["axis_c"]);
+
+			// set orientation
+			pCx->state.orientation[0] = 1;
+			pCx->state.orientation[1] = 1;
+			
+			pCx->custom_data["rotation_about_z_axis"]=atan(pCx->state.orientation[1]/pCx->state.orientation[0])*180.0/3.14159265358;    //in degrees
+
+			std::cout << pCx->ID  << " : " << pCx->type << std::endl;
+			std::cout << "vol " << new_volume<<std::endl;;
+			std::cout << "aax " << pCx->custom_data["axis_a"]<<std::endl;;
+			std::cout << "bax " << pCx->custom_data["axis_b"]<<std::endl;;
+			std::cout << "cax " << pCx->custom_data["axis_c"]<<std::endl;;
+		}
+
+		}
 	return; 
 }
 
