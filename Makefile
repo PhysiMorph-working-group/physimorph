@@ -185,8 +185,8 @@ morph:
 	cp -f ./physimorph/Makefile ./
 	cp -f ./physimorph/VERSION.txt ./
 	cp -rf ./physimorph/config/* ./config/
-	cp -f ./physimorph/Makefile ./sample_projects/Makefile-default
 	make insertion
+# cp -f ./physimorph/Makefile ./sample_projects/Makefile-default
 
 reset-dont-use:
 	rm -f *.cpp 
