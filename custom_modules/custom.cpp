@@ -255,8 +255,8 @@ void setup_tissue( void )
 	{
 		pC = create_cell( *pCs ); 
 		std::vector<double> position (3,0.0);
-		position[0] = Xmax-3*Xstep;
-		position[1] = 100;
+		position[0] = Xmax-5*Xstep;
+		position[1] = 200;
 		position[2] = 0;
 		//position[1] = parameters.doubles("cy"); 
 		pC->assign_position( position );
@@ -462,8 +462,8 @@ void custom_assign_orientation(Cell* pCell, Phenotype& phenotype, double dt_)
 	// std::cout << "dot_prod " << dot_prod << " ... " << std::endl; 
 
 	// get bias direction and turn incrementaly 
-	pCell->state.orientation[0] += 0.001*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
-	pCell->state.orientation[1] += 0.001*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
+	pCell->state.orientation[0] += 0.0001*(phenotype.motility.migration_bias_direction[0]-pCell->state.orientation[0]);
+	pCell->state.orientation[1] += 0.0001*(phenotype.motility.migration_bias_direction[1]-pCell->state.orientation[1]);
 	pCell->state.orientation[2] = 1;
 
 	// check if facing the opposite direction. If so, switch
