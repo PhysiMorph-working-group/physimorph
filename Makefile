@@ -65,6 +65,15 @@ pugixml_OBJECTS := pugixml.o
 PhysiCell_OBJECTS := $(BioFVM_OBJECTS)  $(pugixml_OBJECTS) $(PhysiCell_core_OBJECTS) $(PhysiCell_module_OBJECTS)
 ALL_OBJECTS := $(PhysiCell_OBJECTS) $(PhysiCell_custom_module_OBJECTS)
 
+# template:
+# 	cp ./sample_projects/template/custom_modules/* ./custom_modules/
+# 	touch main.cpp && cp main.cpp main-backup.cpp
+# 	cp ./sample_projects/template/main.cpp ./main.cpp 
+# 	cp Makefile Makefile-backup
+# 	cp ./sample_projects/template/Makefile .
+# 	cp ./config/PhysiCell_settings.xml ./config/PhysiCell_settings-backup.xml 
+# 	cp ./sample_projects/template/config/* ./config/
+
 # compile the project 
 
 all: main.cpp $(ALL_OBJECTS)
@@ -188,7 +197,7 @@ morph:
 	make insertion
 # cp -f ./physimorph/Makefile ./sample_projects/Makefile-default
 
-reset-dont-use:
+reset:
 	rm -f *.cpp 
 	cp ./sample_projects/Makefile-default Makefile 
 	rm -f ./custom_modules/*
