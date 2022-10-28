@@ -386,7 +386,7 @@
         <major_axis_2a type="double" units="um" description="">240</major_axis_2a>
         <starting_cell_volume type="double" units="um^3" description="">1000</starting_cell_volume>
         <eccentricity type="double" units="dimensionless" description="">0.9</eccentricity>
-        <number_secretor_cells type="int" units="cells" description="">1</number_secretor_cells>
+        <number_secretor_cells type="int" units="cells" description="">0</number_secretor_cells>
         <eccentricity_secretor type="double" units="dimensionless" description="">0</eccentricity_secretor>
         <major_axis_2a_secretor type="double" units="um" description="">100</major_axis_2a_secretor>
     </user_parameters>
